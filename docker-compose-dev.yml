@@ -1,0 +1,22 @@
+version: "3.7"
+
+services:
+  app:
+    build: app
+    container_name: django-gunicorn
+    restart: always
+    env_file:
+      - ./app/django-local.env
+    command:
+      "gunicorn --workers=2 --bind=0.0.0.0:8000 app.wsgi:application"
+    ports:
+      - "8000:8000"
+  nginx:
+    image: nginx:1.17
+    container_name: ngx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    depends_on:
+      - app
